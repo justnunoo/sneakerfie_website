@@ -1,0 +1,51 @@
+  <div class="modal fade" id="myModal{{ item.id }}">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Add Product</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'update_cart_item' item.id %}">
+            {% csrf_token %}
+            <div class="form-floating mb-3 mt-3">
+              <input type="text" class="form-control" id="name" placeholder="Name" name="name" value="{{ item.product.name }}" disabled>
+              <label for="name">Name</label>
+            </div>
+            <div class="form-floating">
+                <select class="form-select" id="size" name="size" required>
+                  {% for size in item.product.sizes.all %}
+                    <option value="{{ size.id }}">{{ size }}</option>
+                  {% endfor %}
+                </select>
+                <label for="size" class="form-label">Select product size (select one):</label>
+            </div>
+            <br>
+            <div class="form-floating">
+                <select class="form-select" id="color" name="color" required>
+                  {% for color in item.product.colors.all %}
+                    <option value="{{ color.id }}">{{ color }}</option>
+                  {% endfor %}
+                </select>
+                <label for="color" class="form-label">Select product category (select one):</label>
+            </div>
+              
+            <div class="form-floating mt-3 mb-3">
+              <input type="number" class="form-control" id="quantity" placeholder="Quantity" name="quantity" max="10" required>
+              <label for="quantity">Quantity</label>
+            </div>
+
+            <div class="form-floating mt-3 mb-3">
+              <input type="number" step="0.01" class="form-control" id="price" placeholder="Price" name="price" value="{{ item.price }}" disabled>
+              <label for="price">Price</label>
+            </div>
+            <br>
+            <div class="clearfix">
+                <button type="submit" class="btn btn-primary float-start">Update Cart</button>
+                <button type="reset" class="btn btn-danger float-end">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

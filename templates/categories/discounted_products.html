@@ -1,0 +1,90 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="mb-4 pt-4" style="text-align: center;">Discounted Products</h1>
+
+    {% if products %}
+      <div class="row">
+        {% for product in products %}
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card">
+              <a href="{% url 'product_detail' product.id %}">
+                <img src="{% static product.image_path %}" class="card-img-top w-100" alt="{{ product.name }}">
+                <div class="card-body" style="text-align: center;">
+                  <div class="colors">
+                    {% for image in product.get_small_images %}
+                      <img class="small-image" src="{% static image.image_path %}" alt="Red">
+                    {% endfor %}
+                  </div>
+                  <div class="mask">
+                      <div class="d-flex justify-content-start align-items-end h-100" >
+                          <h5><span class="badge bg-dark ms-2">{{ product.categories }}</span></h5>
+                      </div>
+                  </div>
+                  <div class="hover-overlay">
+                      <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                  </div>
+                  
+                  <a href="{% url 'product_detail' product.id %}" class="text-reset" style="text-decoration: none;">
+                      <h5 class="card-title mb-2">{{ product.name }}</h5>
+                  </a>
+                  
+                  {% if product.discount %}
+                    <h6 class="mb-3 price lead">
+                        <span class="me-1">
+                            <del><span>&#8373;</span>{{ product.price }}</del>
+                        </span>
+                        <span><span>&#8373;</span>{{ product.discounted_price }}</span>
+                    </h6>
+                   {% else %}
+                        <h6 class="lead"><span><span>&#8373;</span>{{ product.price }}</span></h6>
+                   {% endif %}
+                </div>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <h1 class="mb-4">No discounted products available</h1>
+    {% endif %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const smallImages = document.querySelectorAll('.small-image');
+      smallImages.forEach(smallImage => {
+        smallImage.addEventListener('mouseover', function() {
+          const parentImage = this.closest('.card').querySelector('.card-img-top');
+          if (parentImage) {
+            const smallImageUrl = this.src;
+            const parentImageUrl = parentImage.src;
+            parentImage.src = smallImageUrl;
+            this.src = parentImageUrl;
+            this.classList.add('fade-in'); // add the "fade-in" class to the small image
+          } else {
+            console.error('Parent element is not an image!');
+          }
+        });
+        smallImage.addEventListener('mouseout', function() {
+          const parentImage = this.closest('.card').querySelector('.card-img-top');
+          if (parentImage) {
+            const smallImageUrl = this.src;
+            const parentImageUrl = parentImage.src;
+            parentImage.src = smallImageUrl;
+            this.src = parentImageUrl;
+            this.classList.remove('fade-in'); // remove the "fade-in" class from the small image
+          } else {
+            console.error('Parent element is not an image!');
+          }
+        });
+      });
+    });
+
+    function toggleFavorite(icon) {
+      icon.classList.toggle('active');
+    }
+  </script>
+{% endblock %}

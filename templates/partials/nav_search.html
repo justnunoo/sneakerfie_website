@@ -1,0 +1,61 @@
+<style>
+  .search-container {
+    position: relative;
+    display: inline-block; /* Ensures the container expands with the search bar */
+    margin-right: auto;
+    z-index: 1;
+}
+
+.search-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.search-form {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.search-bar {
+    padding: 6px;
+    margin-right: 10px;
+    border: 2px solid black;
+    border-radius: 15px;
+}
+
+.search-form.active {
+    width: 12rem; /* Adjust width as needed */
+    opacity: 1;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+</style>
+
+
+<div class="search-container">
+  <button class="search-icon" onclick="toggleSearch()">
+      <i class="fas fa-search"></i>
+  </button>
+  <form class="search-form" method="GET" action="{% url 'search' %}">
+      <input type="search" class="search-bar" placeholder="Search Shoe" aria-label="Search" name="query">
+  </form>
+</div>
+
+<script>
+  function toggleSearch() {
+    var searchForm = document.querySelector('.search-form');
+    searchForm.classList.toggle('active');
+    if (searchForm.classList.contains('active')) {
+        searchForm.querySelector('input[type="search"]').focus();
+    } else {
+        searchForm.querySelector('input[type="search"]').value = '';
+    }
+}
+
+</script>

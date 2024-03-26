@@ -1,0 +1,118 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'auth/register.css' %}">
+
+<div class="container-fluid main d-flex justify-content-center align-items-center vh-100">
+  <div class="wrapper text-center">
+    
+  <div class="form-box login">
+      <h2>Register</h2>
+      <form method="POST" action="{% url 'register' %}">
+          {% csrf_token %}
+          <div class="input-box">
+              <span class="icon">
+                  <ion-icon name="mail"></ion-icon>
+              </span>
+              <input type="text" name="username" required>
+              <label>Username</label>
+          </div>
+          
+          <div class="input-box">
+            <span class="icon">
+                <ion-icon name="mail"></ion-icon>
+            </span>
+            <input type="email" name="email" required>
+            <label>Email</label>
+          </div>
+
+          <div class="input-box">
+            <span class="icon">
+                <ion-icon name="call"></ion-icon>
+            </span>
+            <input type="tel" name="user_number" required>
+            <label>Phone number</label>
+          </div>
+          
+          <div class="input-box">
+            <span class="icon">
+                <ion-icon name="lock-closed" onclick="togglePassword('register-password1')"></ion-icon>
+            </span>
+            <input type="password" name="password1" id="register-password1" required>
+            <label>Password</label>
+        </div>
+
+        <div class="input-box">
+            <span class="icon">
+                <ion-icon name="lock-closed" onclick="togglePassword('register-password2')"></ion-icon>
+            </span>
+            <input type="password" name="password2" id="register-password2" required>
+            <label> Repeat Password</label>
+        </div>
+
+        <!-- <div class="remember-forgot">
+          <label>
+              <input type="checkbox"> I agree to terms and conditions
+          </label>
+      </div> -->
+
+          <button type="submit" class="btn btn-primary button" name="signup">Register</button>
+
+          <h6 style="text-align: center; padding-top: 5px;">OR</h4>
+          
+          <div class="col">
+
+              <!-- <a href="#" class="fb btn py-2">
+                  <i class="fa-brands fa-facebook fa-xl" style="color: #075ced;"></i> Continue with Facebook
+                  </a>
+              <br> -->
+                {% if product_id %}
+                  <a href="{% provider_login_url 'google' %}?next=/product_detail/{{ product_id }}/" class="btn btn-primary button">Continue with Google</a>
+                {% else %}
+                  <a href="{% provider_login_url 'google' %}?next=/" class="google btn button py-2">
+                      <i class="fa-brands fa-google fa-xl" style="color: #f20707;margin-right: 20px;"></i>Continue with Google
+                  </a>
+                {% endif %}
+              
+              <!-- <a href="#" class="apple btn py-2">
+                  <i class="fa-brands fa-apple fa-xl" style="color: #e9ecf1;"></i></i> Continue with Apple
+              </a> -->
+          </div>
+          <div class="login-register">
+              <p>Already have an account?
+                  <a href="{% url 'login' %}" class="register-link"><strong>Login</strong></a>
+              </p>
+          </div>
+      </form>
+      
+  </div>
+
+  
+
+  </div>
+</div>
+
+
+  <script>
+    function togglePassword(passwordId) {
+    var passwordInput = document.getElementById(passwordId);
+    var icon = passwordInput.previousElementSibling.querySelector('ion-icon');
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.setAttribute('name', 'lock-open');
+    } else {
+        passwordInput.type = "password";
+        icon.setAttribute('name', 'lock-closed');
+    }
+}
+  </script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+{% endblock %}
+

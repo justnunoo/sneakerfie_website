@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order Notification</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .order-details {
+            margin-bottom: 20px;
+        }
+        .order-item {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .order-item-header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .order-item-body {
+            padding: 10px;
+        }
+        .order-item-title {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>New Order Notification</h2>
+        <div class="order-details">
+            <p><strong>Order ID:</strong> {{ order.pk }}</p>
+            <p><strong>User:</strong> {{ order.user.username }}</p>
+            <p><strong>User:</strong> {{ order.created_at }}</p>
+            <p><strong>Total Price:</strong> <span>&#8373;</span>{{ order.total_price }}</p>
+        </div>
+        <h3>Order Items:</h3>
+        {% for order_item in order.orderitem_set.all %}
+            <div class="order-item">
+                <div class="order-item-header">
+                    <span class="order-item-title">{{ order_item.product.name }}</span>
+                </div>
+                <div class="order-item-body">
+                    <p><strong>Price:</strong> <span>&#8373;</span>{{ order_item.price }}</p>
+                    <p><strong>Quantity:</strong> {{ order_item.quantity }}</p>
+                    <p><strong>Size:</strong> {{ order_item.size }}</p>
+                    <p><strong>Color:</strong> {{ order_item.color }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

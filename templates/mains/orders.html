@@ -1,0 +1,31 @@
+{% extends 'partials/base.html' %}
+
+{% block content %}
+<div class="mt-4 pt-4">
+    <br>
+</div>
+
+<div class="container" class="mt-4 pt-4">
+    <h2 style="text-align: center;">MY ORDERS</h2>
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Total price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <td><a href="{% url 'order_details' order.id %}">Order {{ order.id }}</a></td>
+                        <td>{{ order.total_price }}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No order placed</p>
+    {% endif %}
+</div>
+{% endblock %}

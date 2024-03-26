@@ -1,0 +1,133 @@
+{% load static %}  
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-expand-sm navbar-light bg-white mb-2">
+    <!-- Container wrapper -->
+    <div class="container">    
+      <!-- Toggle button -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-mdb-toggle="collapse"
+        data-mdb-target="#navbarSupportedContent1"
+        aria-controls="navbarSupportedContent1"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+  
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent1">      
+        <!-- Navbar brand -->
+        <a class="navbar-brand mt-2 mt-sm-0" href="{% url 'home' %}">
+          <img
+            src="{% static 'logo.png' %}"
+            height="40"
+            width="60"
+            alt="Sneaker Fie Logo"
+            loading="lazy"
+          />
+        </a>
+        <!-- Left links -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item active">
+            <a class="nav-link " href="{% url 'home' %}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Shop</a>
+          </li>
+          
+           <!-- dropdown for brand -->
+           <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Brands</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'nike' %}">Nike</a></li>
+              <li><a class="dropdown-item" href="{% url 'adidas' %}">Adidas</a></li>
+              <li><a class="dropdown-item" href="{% url 'jordan' %}">Jordan</a></li>
+              <li><a class="dropdown-item" href="{% url 'puma' %}">Puma</a></li>
+              <li><a class="dropdown-item" href="{% url 'vans' %}">Vans</a></li>
+              <li><a class="dropdown-item" href="{% url 'reebok' %}">Reebok</a></li>
+              <li><a class="dropdown-item" href="{% url 'new_balance' %}">New Balance</a></li>
+              <li><a class="dropdown-item" href="{% url 'balenciaga' %}">Balenciaga</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Categories</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'trending' %}">Trending</a></li>
+              <li><a class="dropdown-item" href="{% url 'new' %}">New</a></li>
+              <li><a class="dropdown-item" href="{% url 'outdoor' %}">Outdoor</a></li>
+              <li><a class="dropdown-item" href="{% url 'discounted_products' %}">Discounted</a></li>
+            </ul>
+          </li>
+
+          <!-- {% if user.is_authenticated and user.is_staff%}
+            <li class="nav-item">
+              <a href="{% url 'add_product' %}" class="nav-link btn-primary">Add Product</a>
+            </li>
+          {% endif %} -->
+          
+          <!-- <li class="nav-item">
+            <a class="nav-link me-3" href="#">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link me-3" href="#">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+          </li> -->
+        </ul>
+        <!-- Left links -->      
+      </div>
+      <!-- Collapsible wrapper -->
+      
+      <!-- Right elements -->
+      <div class="d-flex align-items-center">
+        
+        <!-- Search -->
+        <form class="w-auto py-1 me-2 search-form" style="max-width: 12rem" method="GET" action="{% url 'search' %}" >
+          <input type="search" class="form-control rounded-0" placeholder="Search Shoe" aria-label="Search" name="query" style="padding-right: 10px;">
+        </form>
+
+        <!-- {% include 'partials/nav_search.html' %} -->
+
+        {% if user.is_authenticated %}
+          <!-- Icon -->
+          <a class="nav-link me-2" href="{% url 'favorite' %}">
+            <i class="fas fa-heart" title="Favorites"></i>
+          </a>
+  
+          <a class="nav-link me-2" href="{% url 'cart' %}">
+            <i class="fas fa-shopping-cart"></i>
+            {% if cart_item_count != 0 %}
+              <span class="badge rounded-pill badge-notification bg-danger">{{ cart_item_count }}</span>
+            {% endif%}
+          </a>
+  
+          <a class="nav-link me-2" href="{% url 'logout' %}">
+            logout
+          </a>
+        {% else %}
+          <a class="btn btn-primary" style="padding: 5px 15px 5px 15px;" href="{% url 'login' %}">
+            Login
+          </a>
+        {% endif %}
+        
+      </div>
+      <!-- Right elements -->
+      
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+
+<style>
+    /* Adjust search form width for smaller screens */
+    @media (max-width: 992px) {
+        .search-form {
+            max-width: 8rem; /* Adjust the width as needed */
+        }
+    }
+</style>

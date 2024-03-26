@@ -1,0 +1,32 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="pt-5">Ordered Items</h2>
+    <div class='table-responsive'>        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order_item in order.orderitem_set.all %}
+                <tr>
+                    <td>{{ order_item.product.name }}</td>
+                    <td><span>&#8373;</span>{{ order_item.price }}</td>
+                    <td>{{ order_item.quantity }}</td>
+                    <td>{{ order_item.subtotal }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3"><strong>Grand Total:</strong></td>
+                    <td><strong><span>&#8373;</span>{{ total_price }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

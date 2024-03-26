@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparent Div Box</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .main{
+        background-image: url('./static/414976-shoes-beach.jpg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: 100% 100%;
+      }
+        .wrapper {
+            background: transparent;
+            border: 2px solid rgba((red), green, blue, .5);
+            box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+            border-radius: 20px;
+            width: 400px;
+            height: 550px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: height .2s ease;
+            overflow: hidden;
+        }
+
+        .wrapper.active {
+    height: 600px;
+}
+
+.wrapper .form-box{
+    width: 100%;
+    padding: 40px;
+}
+
+.wrapper .form-box.login {
+    transition: transform .18s ease;
+    transform: translateX(0);
+}
+
+.wrapper.active .form-box.login {
+    transition: none;
+    transform: translateX(-400px);
+}
+
+.wrapper .form-box.register {
+    position: absolute;
+    transition: none;
+    transform: translateX(400px);
+}
+
+.wrapper.active .form-box.register {
+    transition: transform .18s ease;
+    transform: translateX(0);
+}
+
+.wrapper .icon-close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    background: #162938;
+    font-size: 2em;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
+}
+
+.form-box h2{
+    font-size: 2em;
+    color: #162938;
+    text-align: center;
+}
+
+.input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #162938;
+    margin: 30px 0;
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: 1em;
+    color: #162938;
+    font-weight: 500;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: -5px;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: #162938;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 8px;
+    font-size: 1.2em;
+    color: #162938;
+    line-height: 57px;
+}
+
+.remember-forgot {
+    font-size: .9em;
+    color: #162938;
+    font-weight: 500;
+    margin: -15px 0 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.remember-forgot label input {
+    accent-color: #162938;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #162938;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.button {
+    width: 100%;
+    height: 45px;
+    background: #162938;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #fff;
+    font-weight: 500;
+}
+
+.login-register {
+    font-size: .9em;
+    color: #162938;
+    text-align: center;
+    font-weight: 500;
+    margin: 25px 0 10px;
+}
+
+.login-register p a {
+    color: #162938;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-register p a:hover {
+    text-decoration: underline;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid main d-flex justify-content-center align-items-center vh-100">
+        <div class="wrapper text-center">
+          
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form method="POST" action="{% url 'login' %}">
+                
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="mail"></ion-icon>
+                    </span>
+                    <input type="text" name="username" required>
+                    <label>Username</label>
+                </div>
+    
+                <div class="input-box">
+                    <span class="icon">
+                        <ion-icon name="lock-closed" onclick="togglePassword('login-password')"></ion-icon>
+                    </span>
+                    <input type="password" id="login-password" name="password" required>
+                    <label>Password</label>
+                </div>
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox">Remember me
+                    </label>
+                    <a href="#">Forgot Password</a>
+                </div>
+                <button type="submit" class="btn btn-primary button" name="login">Login</button>
+    
+                <h6 style="text-align: center; padding-top: 5px;">OR</h4>
+                
+                <div class="col">
+    
+                    <!-- <a href="#" class="fb btn py-2">
+                        <i class="fa-brands fa-facebook fa-xl" style="color: #075ced;"></i> Continue with Facebook
+                        </a>
+                    <br> -->
+                  
+                        <a href="{% provider_login_url 'google' %}?next=/product_detail/{{ product_id }}/" class="btn btn-primary button">Login with Google</a>
+                        
+                        <br><br>
+
+                        <a href="{% provider_login_url 'google' %}?next=/" class="google btn button py-2">
+                            <i class="fa-brands fa-google fa-xl" style="color: #f20707;margin-right: 20px;"></i>Continue with Google
+                        </a>
+                    
+                    <!-- <a href="#" class="apple btn py-2">
+                        <i class="fa-brands fa-apple fa-xl" style="color: #e9ecf1;"></i></i> Continue with Apple
+                    </a> -->
+                </div>
+                <div class="login-register">
+                    <p>Don't have an account?
+                        <a href="#" class="register-link">Register</a>
+                    </p>
+                </div>
+            </form>
+            
+        </div>
+
+        
+
+        </div>
+    </div>
+    <!-- Bootstrap JS (optional, if needed) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+  <script>
+    function togglePassword(passwordId) {
+    var passwordInput = document.getElementById(passwordId);
+    var icon = passwordInput.previousElementSibling.querySelector('ion-icon');
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.setAttribute('name', 'lock-open');
+    } else {
+        passwordInput.type = "password";
+        icon.setAttribute('name', 'lock-closed');
+    }
+}
+  </script>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+html{
+  /* background-image: linear-gradient(to right, white, hsla(220, 20%, 77%, 0.747) ); */
+  background-image: linear-gradient(to right, rgb(235, 231, 231), #d3d3d3); /* Define your gradient colors */
+    animation-name: gradientAnimation;
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-direction: alternate; /* Make the animation go back and forth */
+    animation-iteration-count: infinite; /* Repeat the animation infinitely */
+  font-family: Arial, Helvetica, sans-serif;
+}
+  
+@keyframes gradientAnimation {
+  0% {
+    background-position: left top; background-image: linear-gradient(to right, rgb(235, 231, 231), #d3d3d3);/* Start position of the gradient */
+  }
+  100% {
+    background-position: right bottom; background-image: linear-gradient(to right, rgb(235, 231, 231), #d3d3d3); /* End position of the gradient */
+  }
+}
+    
+    /* header nav ul li {
+      display: inline-block;
+    } */
+    
+    /* header nav a {
+      display: block;
+      padding: 10px 20px;
+      text-decoration: none;
+    } */
+  
+  nav ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  }
+  
+  nav li {
+  margin: 0 1em;
+  }
+  
+  nav a {
+  color: #333;
+  text-decoration: none;
+  padding: 0.5em 1em;
+  border-radius: 5px;
+  }
+  
+  nav{
+    position: fixed;
+    width: 100% !important;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    z-index: 999;
+    background: rgb(249, 252, 253, 0.7);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  nav a:not(.user_icon):hover {
+    color: #22B0BF;
+    transform: scale(1.1);
+    /* transition-delay: 0.05s; */
+  }
+  
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      border-radius: 5px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  
+  a{
+    cursor: pointer;
+  }
+  
+  .hover_zoom:hover {
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .colors {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    display: flex;
+  }
+  
+  .colors img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    object-fit: cover;
+    cursor: pointer;
+  }        
+  
+  .colors img:hover {
+    border: 2px solid #000;
+  }
+  

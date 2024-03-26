@@ -1,0 +1,183 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% include 'partials/messages.html' %}
+
+<style>
+  .colors {
+    display: none; /* Initially hide the color div */
+  }
+
+  .card:hover .card_description{
+    display: none;
+  }
+
+  .card:hover .colors {
+    display: inline; /* Show the color div on hover */
+  }
+
+  /* .card:hover .card-body {
+    transform: translateY(20px); Translate the card-body downward on hover
+  } */
+</style>
+
+  <!-- Carousel -->
+
+<div id="demo" class="carousel slide" data-bs-ride="carousel">
+
+  <!-- Indicators/dots -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
+    <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
+  </div>
+  
+  <!-- The slideshow/carousel -->
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="static\aesthetic nike shoe.png" alt="Image" class="d-block w-100" style="width: auto; height: 400px;">
+      <div class="carousel-caption">
+        {% if user.is_authenticated %}
+        <h3>Welcome to our Shoe Store, {{user.username}}</h3>
+        {% else %}
+        <h3>Welcome to our Shoe Store </h3>
+        {% endif %}
+        <p>Find your perfect pair of shoes today!</p>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="static\nike\Nike Air Huarache.webp" alt="Chicago" class="d-block w-100" style="width: auto; height: 400px;">
+      <div class="carousel-caption">
+          {% if user.is_authenticated %}
+        <h3 style="color: black;">Welcome to our Shoe Store, {{user.username}}</h3>
+        {% else %}
+        <h3 style="color: black;">Welcome to our Shoe Store </h3>
+        {% endif %}
+        <p style="color: black;">Find your perfect pair of shoes today!</p>
+      </div> 
+    </div>
+    <!-- <div class="carousel-item">
+      <img src="static\nike\Nike Air VaporMax 2021.webp" alt="New York" class="d-block w-100" style="height:auto;">
+      <div class="carousel-caption">
+        <h3>New York</h3>
+        <p>We love the Big Apple!</p>
+      </div>  
+    </div> -->
+  </div>
+  
+  <!-- Left and right controls/icons -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+</div>
+
+
+<main>
+  <div class="container">
+    <!-- Navbar -->
+  <!-- <nav class="navbar navbar-expand-lg navbar-dark mt-3 mb-5 shadow p-2" style="background-color: #607D8B">
+    
+    <div class="container-fluid">
+  
+      
+      <a class="navbar-brand" href="#">Categories:</a>
+  
+      
+      <button 
+         class="navbar-toggler" 
+         type="button" 
+         data-mdb-toggle="collapse" 
+         data-mdb-target="#navbarSupportedContent2" 
+         aria-controls="navbarSupportedContent2" 
+         aria-expanded="false" 
+         aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+  
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent2">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+  
+        
+          <li class="nav-item acitve">
+            <a class="nav-link text-white" href="#">All</a>
+          </li>
+          <li class="nav-item">
+                <a class="nav-link text-white" href="#">Shirts</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">Sport wears</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">Outwears</a>
+              </li>
+  
+        </ul>
+  
+        
+        <form class="w-auto py-1" style="max-width: 12rem" method="GET" action="{% url 'search' %}">
+          <input type="search" class="form-control rounded-0" placeholder="Search" aria-label="Search" name="query">
+        </form>
+  
+      </div>
+    </div>
+  
+  </nav> -->
+  <!-- Navbar -->
+  <section class="mt-4">
+    <div class="text-center">
+      <div class="row">
+          {% for product in products %}
+              <div class="col-lg-3 col-md-6 mb-4">
+                  <a href="{% url 'product_detail' product.id %}">
+                      <div class="card" class="hover_zoom">
+                          <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                              data-mdb-ripple-color="light">
+                              <img src="{% static product.image_path %}" class="w-100" alt="product.name"/>
+                              <div class="colors">
+                                  {% for image in product.get_small_images %}
+                                      <img class="small-image" src="{% static image.image_path %}" alt="{{ product.name }}">
+                                  {% endfor %}
+                              </div>
+                      
+                          </div>
+                          <div class="card-body">
+                            <div class="card_description">
+                              <a href="{% url 'product_detail' product.id %}" class="text-reset" style="text-decoration: none;">
+                                <h5 class="card-title mb-2">{{ product.name }}</h5>
+                              </a>
+                              
+                                  <p>  
+                                    {{ product.categories }}
+                                </p>
+                            
+                            </div>
+                            {% if product.discount %}
+                            <h6 class="mb-3 price lead">
+                              <span class="me-1">
+                                  <del><span>&#8373;</span>{{ product.price }}</del>
+                              </span>
+                              <span><span>&#8373;</span>{{ product.discounted_price }}</span>
+                            </h6>
+                          {% else %}
+                            <h6>
+                              <span><span>&#8373;</span>{{ product.price }}</span>
+                            </h6>
+                          {% endif %}
+                          </div>
+                      </div>
+                  </a>
+              </div>
+          {% endfor %}
+      </div>
+  </div>
+  
+  </section>
+  </div>
+</main>
+{% endblock %}

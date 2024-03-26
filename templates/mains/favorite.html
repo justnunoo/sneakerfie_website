@@ -1,0 +1,69 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Add this to the head of your HTML file -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+ 
+{% include 'partials/messages.html' %}
+
+  <div class="container mt-5 mb-4">
+    <h1 class="mb-4">Favorite Products</h1>
+    {% if favorites %}
+    <div class="row">
+      {% for favorite in favorites %}
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card favorite" data-product-id="{{ favorite.product.id }}">
+            <a href="{% url 'product_detail' favorite.product.id %}" style='text-decoration:none'>
+              <img src="{% static favorite.product.image_path %}" class="card-img-top" alt="{{ favorite.product.name }}">
+              <div class="colors">
+                {% for image in favorite.product.get_small_images %}
+                    <img class="small-image" src="{% static image.image_path %}" alt="{{ image.name }}">
+                {% endfor %}
+            </div>
+              <div class="card-body" style="text-align: center;">
+                <h5 class="card-title">{{ favorite.product.name }}</h5>
+                {% if favorite.product.discount %}
+                  <p class="card-text">
+                    <span class="me-1">
+                      <del><span>&#8373;</span>{{ favorite.product.price }}</del>
+                    </span>
+                    <span><span>&#8373;</span>{{ favorite.product.discounted_price }}</span>
+                  </p>
+                {% else %}
+                  <p class="card-text"><span><span>&#8373;</span>{{ favorite.product.price }}</span></p>
+                {% endif %}
+                <form class="remove-favorite-form" data-product-id="{{ favorite.product.id }}" method="post" action="{% url 'remove_from_favorite' favorite.product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove from Favorites</button>
+                  </form>                  
+              </div>
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% else %}
+        <h5>You have no favorite Products</h5>
+    {% endif %}
+  </div>
+  
+{% endblock %}
+
+  <!-- Add this script at the end of your HTML file or in an external JavaScript file -->
+  <script>
+    $(document).ready(function() {
+      $('.remove-favorite-form').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var productId = form.data('product-id');
+        var card = $('.favorite-card[data-product-id="' + productId + '"]');
+  
+        // Fade out the card
+        card.fadeOut('slow', function() {
+          // Submit the form after the fade-out is complete
+          form.submit();
+        });
+      });
+    });
+  </script>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Add Product</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+ <style> 
+  /* Custom style for larger select field */
+    .custom-select-lg {
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+    width: 350px; /* Adjust the width as needed */
+}
+</style>
+</head>
+<body>
+
+<div class="container mt-3">
+
+  <!-- Button to Open the Modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#AddProductModal">
+  Add Product
+</button>
+
+  <div class="modal fade" id="AddProductModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title" id="messageModalLabel">Add Product</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <form method="post" action="#">
+            <div class="form-floating mb-3 mt-3">
+              <input type="text" class="form-control" id="name" placeholder="Name" name="name" required>
+              <label for="name">Name</label>
+            </div>
+        
+            <div class="form-floating">
+                <select class="form-select" id="brands" name="brands" required>
+                  <option>Jordan</option>
+                  <option>Nike</option>
+                  <option>Adidas</option>
+                  <option>Puma</option>
+                  <option>Reebok</option>
+                  <option>New Balance</option>
+                  <option>Balenciaga</option>
+                  <option>Vans</option>
+                </select>
+                <label for="brands" class="form-label">Select product brand (select one):</label>
+            </div>
+            
+            <br>
+            <div class="form-floating">
+                <select class="form-select" id="categories" name="categories" required>
+                  <option>Trending</option>
+                  <option>Outdoor</option>
+                  <option>New</option>
+                </select>
+                <label for="categories" class="form-label">Select product category (select one):</label>
+            </div>
+        
+            <div class="form-floating mt-3 mb-3">
+              <input type="text" class="form-control" id="image_path" placeholder="Main Image Path" name="image_path" required>
+              <label for="image_path">Main Image Path</label>
+            </div>
+        
+            <div class="form-floating mt-3 mb-3">
+              <input type="number" step="0.01" class="form-control" id="price" placeholder="Price" name="price" required>
+              <label for="price">Price</label>
+            </div>
+        
+            <div class="">
+                <select class="form-select" id="colors" name="colors" size="3" multiple>
+                    <option value="red">Red</option>
+                    <option value="blue">Blue</option>
+                    <option value="green">Green</option>
+                    <option value="white">White</option>
+                    <option value="white">White</option>
+                    <option value="white">White</option>
+                    <option value="white">White</option>
+                    <option value="white">White</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <label for="colors" class="form-label">Select product colors (select available):</label>
+            </div>
+
+            <div class="">
+                <select class="form-select" id="sizes" name="sizes" size="3" multiple>
+                    <option value="36">34</option>
+                    <option value="36">35</option>
+                    <option value="36">36</option>
+                    <option value="36">37</option>
+                    <option value="36">38</option>
+                    <option value="36">39</option>
+                    <option value="36">40</option>
+                    <option value="36">41</option>
+                    <option value="36">42</option>
+                    <option value="36">43</option>
+                    <option value="36">44</option>
+                    <option value="36">45</option>
+                    <option value="36">46</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <label for="sizes" class="form-label">Select product sizes (select available):</label>
+            </div>
+            
+            <br>
+
+            <div class="form-check">
+              <label for="discount" class="form-check-label">Discount applied?</label>
+              <input class="form-check-input" type="checkbox" id="discount" name="discount" value="discount">
+            </div>
+
+            <div class="form-floating mt-3 mb-3" id="discountPercentDiv">
+              <input type="number" step="0.01" class="form-control" id="discount_percent" placeholder="Discount Percentage" name="discount_percent" min="0.1" max="99.9" required>
+              <label for="discount_percent">Discount Percentage</label>
+            </div>
+
+            <br>
+            
+            <div class="clearfix">
+              
+                <button type="submit" class="btn btn-primary float-start">Add Product</button>
+             
+              
+                <button type="reset" class="btn btn-danger float-end">Reset</button>
+             
+            </div>
+            
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+    // Get references to the checkbox and the second div
+  const discountCheckbox = document.getElementById('discount');
+  const discountPercentDiv = document.getElementById('discountPercentDiv');
+
+  // Add event listener to the checkbox
+  discountCheckbox.addEventListener('change', function() {
+      // If checkbox is checked, show the second div; otherwise, hide it
+      if (discountCheckbox.checked) {
+          discountPercentDiv.style.display = 'block';
+      } else {
+          discountPercentDiv.style.display = 'none';
+      }
+  });
+
+  // Initialize the visibility of the second div based on the initial state of the checkbox
+  if (!discountCheckbox.checked) {
+      discountPercentDiv.style.display = 'none';
+  }
+
+</script>
+</body>
+</html>
