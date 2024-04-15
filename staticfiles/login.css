@@ -1,23 +1,15 @@
 .main{
-    display: flex !important;
-    /* justify-content: center !important;
-    align-items: center !important; */
-    min-height: 100vh !important;
-    background-image: url('./an\ aesthetic\ mi\ 7b797791-d3b1-434b-b56e-1983c9371e3d.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100% 100%;
-}
-
-.wrapper{
-    /* position: relative; */
-    width: 400px;
-    height: 550px;
-    background: transparent;
+        background-image: url('./414976-shoes-beach.jpg');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: 100% 100%;
+      }
+.wrapper {
+    background-color: rgba(255, 0, 0, 0.5); /* Red color with 50% opacity */
     border: 2px solid rgba((red), green, blue, .5);
     border-radius: 20px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+    width: 400px;
+    height: 550px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -144,8 +136,7 @@
     text-decoration: underline;
 }
 
-
-.btn {
+.button {
     width: 100%;
     height: 45px;
     background: #162938;

@@ -1,1 +1,1 @@
-web : gunicorn sneakerfie.wsgi -- log-file -
+web : gunicorn sneakerfie.wsgi -- log-file -h

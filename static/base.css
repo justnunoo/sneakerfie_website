@@ -27,6 +27,14 @@ html{
       padding: 10px 20px;
       text-decoration: none;
     } */
+
+    .card {
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
   
   nav ul {
   display: flex;

@@ -60,8 +60,8 @@ brands = (
 ) 
 
 class Product(models.Model):
-    name = models.CharField(max_length=100)
-    brands = models.CharField(max_length = 20, choices = brands)
+    name = models.CharField(max_length=100, unique = True)
+    brands = models.CharField(max_length = 20, choices = brands, unique = True)
     image_path = models.CharField(max_length=100)
     price = models.DecimalField(max_digits = 5, decimal_places = 2)
     small_images = models.ManyToManyField(sub_image, blank=True)

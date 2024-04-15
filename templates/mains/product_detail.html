@@ -153,16 +153,27 @@
       <div class="row">
         <!--Grid column-->
         {% for image in images_to_display %}
-        <div class="col-lg-4 col-md-12 mb-4 bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
-            <a href="{% url 'product_detail' image.id %}"> <!-- Anchor tag moved inside the column div -->
+        <!-- <div class="col-lg-4 col-md-6 mb-4 bg-image hover-zoom ripple ripple-surface ripple-surface-light">
+            <a href="{% url 'product_detail' image.id %}">
                 <img src="{% static image.image_path %}" class="img-fluid" alt="{{ image.name}}" />
             </a>
-            <!-- <div class="colors">
+            <div class="colors">
                 {% for small_image in image.get_small_images %}
                     <img class="small-image" src="{% static small_image.img %}" alt="{{ small_image.name }}">
                 {% endfor %}
-            </div> -->
+            </div>
+        </div> -->
+        <div class="col-md-4">
+            <div class="card">
+                <a href="{% url 'product_detail' image.id %}">
+                    <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light">
+                        <img src="{% static image.image_path %}" class="img-fluid" alt="{{ image.name}}" />
+                    </div>
+                </a>
+            </div>
         </div>
+        
+
         {% endfor %}
         <!--Grid column-->
     </div>

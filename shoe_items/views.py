@@ -691,8 +691,18 @@ def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/')  # Redirect to home page
+            # Check if the product already exists
+            name = form.cleaned_data.get('name')
+            if not Product.objects.filter(name__iexact=name).exists():
+                # Product does not exist, save it
+                form.save()
+                messages.success(request,"Product added successfully")
+                
+            else:
+                messages.error(request, "Product already exists.")
+
+            return redirect('home')
+
     else:
         form = ProductForm()
     return render(request, 'partials/admin_add_product.html', {'form': form})

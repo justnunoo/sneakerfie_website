@@ -93,6 +93,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    # "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     
 ]
 
@@ -169,7 +171,7 @@ STATIC_URL = 'static/'
 
 STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # MEDIA_URL = '/media/'
 
@@ -205,3 +207,5 @@ EMAIL_HOST_PASSWORD = 'objy wazf umqw amii'
 
 
 django_heroku.settings(locals())
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"

@@ -48,13 +48,13 @@
                             <td>{{ item.quantity }}</td>
                             <td><span>&#8373;</span>{{ item.price }}</td>
                             <td>
-                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#myModal{{ item.id }}">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#myModal{{ item.id }}">
                                     Update
                                 </button>
                                 {% include 'partials/update_cart_modal.html' %}
                             </td>
                             <td>
-                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger btn-sm my-0 p-2"> Remove </a>
+                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-outline-danger btn-sm my-0 p-2"> Remove </a>
                                 
                             </td>
                         </tr>
