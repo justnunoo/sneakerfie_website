@@ -56,12 +56,7 @@ SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
-    }, 
-    # 'APP': {
-    #         'client_id': '118965752580-vvb9oklai2mgil32smlmrdl3923o043e.apps.googleusercontent.com',
-    #         'secret': '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',
-    #         'key': ''
-    #     }
+        }, 
     }
 
 
