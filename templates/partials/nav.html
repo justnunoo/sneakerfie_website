@@ -1,8 +1,18 @@
 {% load static %}  
   <!-- Navbar -->
-  <nav class="navbar fixed-top navbar-expand-lg navbar-expand-sm navbar-light bg-white mb-2">
+  <nav class="navbar fixed-top navbar-expand-md navbar-light bg-white">
     <!-- Container wrapper -->
-    <div class="container">    
+    <div class="container-fluid">
+      <!-- Navbar brand -->
+      <a class="navbar-brand mt-2 mt-sm-0" href="{% url 'home' %}">
+        <img
+          src="{% static 'logo.png' %}"
+          height="40"
+          width="60"
+          alt="Sneaker Fie Logo"
+          loading="lazy"
+        />
+      </a>    
       <!-- Toggle button -->
       <button
         class="navbar-toggler"
@@ -13,23 +23,15 @@
         aria-expanded="false"
         aria-label="Toggle navigation"
       >
-        <i class="fas fa-bars"></i>
+        <!-- <i class="fas fa-bars"></i> -->
+        <span class="navbar-toggler-icon"></span>
       </button>
   
       <!-- Collapsible wrapper -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent1">      
-        <!-- Navbar brand -->
-        <a class="navbar-brand mt-2 mt-sm-0" href="{% url 'home' %}">
-          <img
-            src="{% static 'logo.png' %}"
-            height="40"
-            width="60"
-            alt="Sneaker Fie Logo"
-            loading="lazy"
-          />
-        </a>
+        
         <!-- Left links -->
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item active">
             <a class="nav-link " href="{% url 'home' %}">Home</a>
           </li>
@@ -62,28 +64,10 @@
             </ul>
           </li>
 
-          <!-- {% if user.is_authenticated and user.is_staff%}
-            <li class="nav-item">
-              <a href="{% url 'add_product' %}" class="nav-link btn-primary">Add Product</a>
-            </li>
-          {% endif %} -->
-          
-          <!-- <li class="nav-item">
-            <a class="nav-link me-3" href="#">
-              <i class="fab fa-twitter"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link me-3" href="#">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-          </li> -->
         </ul>
-        <!-- Left links -->      
-      </div>
-      <!-- Collapsible wrapper -->
-      
-      <!-- Right elements -->
+        <!-- Left links -->    
+
+        <!-- Right elements -->
       <div class="d-flex align-items-center">
         
         <!-- Search -->
@@ -110,13 +94,17 @@
             logout
           </a>
         {% else %}
-          <a class="btn btn-primary" style="padding: 5px 15px 5px 15px;" href="{% url 'login' %}">
+          <a class="btn btn-outline-primary rounded-pill px-4" href="{% url 'login' %}">
             Login
           </a>
         {% endif %}
         
       </div>
-      <!-- Right elements -->
+      <!-- Right elements --> 
+      </div>
+      <!-- Collapsible wrapper -->
+      
+      
       
     </div>
     <!-- Container wrapper -->

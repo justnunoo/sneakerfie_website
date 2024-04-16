@@ -696,7 +696,7 @@ def add_product(request):
             if not Product.objects.filter(name__iexact=name).exists():
                 # Product does not exist, save it
                 form.save()
-                messages.success(request,"Product added successfully")
+                messages.success(request,f"{name} added successfully")
                 
             else:
                 messages.error(request, "Product already exists.")

@@ -54,37 +54,6 @@ html{
   border-radius: 5px;
   }
   
-  nav{
-    position: fixed;
-    width: 100% !important;
-    padding-bottom: 20px;
-    padding-top: 20px;
-    z-index: 999;
-    background: rgb(249, 252, 253, 0.7);
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-  nav a:not(.user_icon):hover {
-    color: #22B0BF;
-    transform: scale(1.1);
-    /* transition-delay: 0.05s; */
-  }
-  
-    
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #f9f9f9;
-      min-width: 160px;
-      border-radius: 5px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1;
-    }
-    
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
-  
   a{
     cursor: pointer;
   }
