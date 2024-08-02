@@ -8,9 +8,9 @@
 {% include 'partials/messages.html' %}
 
   <div class="container mt-5 mb-4">
-    <h1 class="mb-4">Favorite Products</h1>
+    <h1 class="mb-4 text-center">Favorite Products</h1>
     {% if favorites %}
-    <div class="row">
+    <div class="row animate-up">
       {% for favorite in favorites %}
         <div class="col-lg-3 col-md-6 mb-4">
           <div class="card favorite" data-product-id="{{ favorite.product.id }}">

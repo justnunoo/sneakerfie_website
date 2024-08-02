@@ -1,0 +1,64 @@
+from django.core.exceptions import PermissionDenied
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.http import JsonResponse
+from django.contrib import messages
+from django.urls import reverse
+from django.conf import settings
+from django.db import transaction
+
+@transaction.atomic
+def create_order(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        try:
+            user = request.user
+            order = Order.objects.create(user=user, total_price=0)
+            cart_items = Cart.objects.filter(user=user)
+
+            total_price = 0
+
+            for cart_item in cart_items:
+                product = cart_item.product
+                product_price = product.price * (100 - product.discount_percent) / 100 if product.discount else product.price
+                sub_total = product_price * cart_item.quantity
+
+                order_item = OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    price=product_price,
+                    quantity=cart_item.quantity,
+                    size=cart_item.size,
+                    color=cart_item.color,
+                    subtotal=sub_total
+                )
+
+                total_price += sub_total
+
+                cart_item.delete()
+
+                # Update sales statistics
+                sales_stat, created = SalesStats.objects.get_or_create(product=product)
+                sales_stat.quantity_ordered += cart_item.quantity
+                sales_stat.save()
+
+            order.total_price = total_price
+            order.save()
+
+            user_profile = UserProfile.objects.get_or_create(user=user)[0]
+            user_profile.update_cart_count()
+
+            # Send email notification to admin and user
+            subject = 'New Order Notification'
+            message = render_to_string('emails/new_order_notification.html', {'order': order})
+            plain_message = strip_tags(message)
+            send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [settings.ADMIN_EMAIL], html_message=message)
+            send_mail(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message=message)
+
+            messages.success(request, 'Order has been successfully placed')
+            return JsonResponse({'success': True, 'order_id': order.id})
+        except Exception as e:
+            messages.error(request, f'Error occurred: {str(e)}')
+            return JsonResponse({'success': False, 'error_message': str(e)})
+    else:
+        raise PermissionDenied("You are not authorized to perform this action.")

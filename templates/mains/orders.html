@@ -5,7 +5,7 @@
     <br>
 </div>
 
-<div class="container" class="mt-4 pt-4">
+<div class="container animate-up" class="mt-4 pt-4">
     <h2 style="text-align: center;">MY ORDERS</h2>
     {% if orders %}
         <div class="table-responsive">
@@ -13,13 +13,17 @@
                 <thead>
                     <tr>
                         <th>Order ID</th>
+                        <th>Time of Order</th>
                         <th>Total price</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for order in orders %}
-                        <td><a href="{% url 'order_details' order.id %}">Order {{ order.id }}</a></td>
-                        <td>{{ order.total_price }}</td>
+                        <tr>
+                            <td><a href="{% url 'order_details' order.id %}">Order {{ order.id }}</a></td>
+                            <td>{{ order.created_at }}</td>
+                            <td>{{ order.total_price }}</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>

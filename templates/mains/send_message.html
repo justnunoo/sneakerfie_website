@@ -1,51 +1,130 @@
-    <style>
-      .float {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        bottom: 40px;
-        right: 40px;
-        background-color: #333;
-        color: #fff;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 30px;
-        box-shadow: 2px 2px 3px #999;
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .float {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      bottom: 40px;
+      right: 40px;
+      background-color: #333;
+      color: #fff;
+      border-radius: 50px;
+      text-align: center;
+      font-size: 30px;
+      box-shadow: 2px 2px 3px #999;
+    }
 
-      .modal-content {
-        width: 500px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="float" data-toggle="modal" data-target="#messageModal">
-      <i class="fas fa-comments"></i>
-    </div>
+    .modal-content {
+      width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div class="float" data-bs-toggle="modal" data-bs-target="#messageModal">
+    <i class="fas fa-comments"></i>
+  </div>
 
-<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="messageModalLabel">Send us a message</h5>
-            
-            <button type="button" class="btn-close" data-dismiss="modal"></button>
-
-          </div>
-          <div class="modal-body">
-            <form method="post" action="{% url 'send_message' %}" id="send-message-form">
-              {% csrf_token %}
-              <div class="form-group">
-                  <textarea class="form-control" id="message" name="content" rows="3"></textarea>
-              </div>
-              <br>
-              <button type="submit" class="btn btn-primary">Send message</button>
+  <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="messageModalLabel">Send us a message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'send_message' %}" id="send-message-form">
+            {% csrf_token %}
+            <div class="form-group">
+              <textarea class="form-control" id="message" name="content" rows="3"></textarea>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary" id="submitButton">Send message</button>
           </form>
         </div>
       </div>
     </div>
-</div> 
-  
-    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </div>
+
+  <div class="modal fade" id="feedback" tabindex="-1" aria-labelledby="order-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p id="feedbackResponse"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const submitButton = document.querySelector("#submitButton");
+      const message = document.querySelector("#message");
+      const form = document.querySelector("#send-message-form");
+      const feedback = document.querySelector("#feedbackResponse");
+      const feedback_modal = new bootstrap.Modal(document.getElementById('feedback'), {
+        keyboard: false
+      });
+      const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+
+      submitButton.disabled = true;
+
+      message.addEventListener("input", () => {
+        const message_trim = message.value.trim();
+        submitButton.disabled = message_trim.length === 0;
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        fetch("{% url 'send_message' %}", {
+          method: "POST",
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+          },
+          body: data
+        })
+        .then(response => response.json())
+        .then(data => {
+          if(data.success){
+            document.getElementById("feedbackResponse").innerHTML = data.message;
+            feedback.classList.add("success-message");
+            feedback.classList.remove("error-message");
+            feedback_modal.show();
+            messageModal.hide();
+          } else {
+            document.getElementById("feedbackResponse").innerHTML = data.error_message;
+            feedback.classList.add("error-message");
+            feedback.classList.remove("success-message");
+            feedback_modal.show();
+          }
+        });
+      });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    });
+  </script>
+
+  <!-- Include Bootstrap and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

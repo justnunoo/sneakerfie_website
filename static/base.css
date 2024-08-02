@@ -28,14 +28,27 @@ html{
       text-decoration: none;
     } */
 
-    .card {
+    /* .card {
       transition: transform 0.3s;
+      position: relative;
     }
 
     .card:hover {
-      transform: scale(1.05);
-    }
+      transform: scale(1.02);
+    } */
   
+    .favorite-icon {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      cursor: pointer;
+      color: #bfbfbf;
+  }
+
+  .favorite-icon-active {
+    color: red !important;
+}
+
   nav ul {
   display: flex;
   list-style-type: none;
@@ -60,8 +73,8 @@ html{
   
   .hover_zoom:hover {
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
-    transform: scale(1.05);
-    transition: all 0.2s ease-in-out;
+    /* transform: scale(1.05);
+    transition: all 0.2s ease-in-out; */
   }
   
   .colors {
@@ -83,3 +96,14 @@ html{
     border: 2px solid #000;
   }
   
+.animate-up {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+

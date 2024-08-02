@@ -6,10 +6,10 @@
 
 
 <div class="container mt-5" style="padding-bottom: 100px;">
-  <h1 class="mb-4 pt-4" style="text-align: center;">{{ brand_name }} SHOES</h1>
+  <h1 class="mb-4 pt-4" style="text-align: center;" id="brand_name">{{ brand_name }} SHOES</h1>
 
   {% if products %}
-  <div class="row">
+  <div class="row animate-up">
     {% for product in products|slice:":" %}
       <div class="col-lg-3 col-md-6 mb-4">
         <div class="card">
@@ -48,6 +48,7 @@
               {% endif %}
             </div>
           </a>
+          <i class="fas fa-heart favorite-icon {% if product.id in favorite_product_ids %}favorite-icon-active{% endif %}" data-product-id="{{ product.id }}"></i>
         </div>
       </div>
     {% endfor %}
@@ -59,3 +60,12 @@
 
 {% include 'partials/footer.html' %}
 {% endblock %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", ()=>{
+      let brand_name =document.querySelector("#brand_name");
+    if (brand_name.innerHTML === "NEW_BALANCE SHOES"){
+      brand_name.innerHTML = "New Balance Shoes";
+    }
+  })
+</script>

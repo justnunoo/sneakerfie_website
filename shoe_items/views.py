@@ -13,11 +13,19 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.utils.html import strip_tags
 from .forms import ProductForm, RegisterForm
+from django.db import transaction
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 
 # Create your views here.
 def home(request):
+    user = request.user
+
+    # Get the user's favorite products
+    favorite_product_ids = Favorite.objects.filter(user=user).values_list('product_id', flat=True)
 
     products = Product.objects.all()
     products = list(products)
@@ -42,7 +50,8 @@ def home(request):
         form = ProductForm()
 
     context = {'products' : products,
-               'form' : form}
+               'form' : form,
+               'favorite_product_ids' : favorite_product_ids}
     return render(request, 'mains/home.html', context)
 
 # def get_filtered_boxes(brand):
@@ -75,7 +84,11 @@ def home(request):
 #     return render(request, f'brands/{brand}.html', context)
 
 def display_by_brand(request, brand):
+    user = request.user
     products = Product.objects.filter(brands = brand)
+
+    # Get the user's favorite products
+    favorite_product_ids = Favorite.objects.filter(user=user).values_list('product_id', flat=True)
 
     discounted_products = []
     for product in products:
@@ -94,7 +107,8 @@ def display_by_brand(request, brand):
 
     brand_name = brand.upper()
     context = {'products' : discounted_products,
-               'brand_name' : brand_name}
+               'brand_name' : brand_name,
+               'favorite_product_ids' : favorite_product_ids}
     return render(request, f'brands/{brand}.html', context)
 
 def adidas(request):
@@ -205,6 +219,7 @@ def register(request):
 
 
 #this function handles the search request
+@login_required
 def logout(request):
     auth.logout(request)
      # Retrieve product_id from session and redirect accordingly
@@ -326,31 +341,74 @@ def cart(request):
 #     return redirect('mains/product_detail.html', product_id=product_id)
 
 
+# def add_to_cart(request, product_id):
+#     user = request.user
+#     product = get_object_or_404(Product, id=product_id)
+
+#     item_name = str(product.name)
+
+#     # Store the product_id in the session
+#     request.session['selected_product_id'] = product_id
+
+#     if request.method == 'POST':
+#         quantity = int(request.POST.get('quantity', 1))
+
+#         # Check if 'size' and 'color' are in POST data
+#         if 'size' in request.POST and 'color' in request.POST:
+#             # size_id = int(request.POST['size'])
+#             # size = get_object_or_404(ShoeSize, id=size_id)
+
+#             selected_size = request.POST.get('selected_size')
+#             size = get_object_or_404(ShoeSize, size=selected_size)
+            
+#             color_id = int(request.POST['color'])
+#             color = get_object_or_404(ShoeColor, id=color_id)
+
+#             # Determine the price based on discount
+#             price = product.price
+#             if product.discount:
+#                 price = product.price * (100 - product.discount_percent) / 100
+
+#             # Check if the item already exists in the cart
+#             item = Cart.objects.filter(product=product, user=user, size=size, color=color).first()
+#             if item:
+#                 item.quantity += quantity
+#                 item.save()
+#             else:
+#                 Cart.objects.create(product=product, user=user, quantity=quantity, size=size, color=color, price=price)
+
+#             # Update UserProfile cart count
+#             user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
+#             user_profile.update_cart_count()
+
+#                  # Return JSON response indicating success
+#             return JsonResponse({'success': True, 'message': f'{item_name} added to Cart'})
+#         else:
+#             # Return JSON response indicating failure
+#             return JsonResponse({'success': False, 'message': 'Invalid request. Please select size and color.'})
+
+#     # Return JSON response indicating invalid request method
+#     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
 def add_to_cart(request, product_id):
     user = request.user
     product = get_object_or_404(Product, id=product_id)
-
     item_name = str(product.name)
-
-    # Store the product_id in the session
-    request.session['selected_product_id'] = product_id
 
     if request.method == 'POST':
         quantity = int(request.POST.get('quantity', 1))
 
-        # Check if 'size' and 'color' are in POST data
-        if 'size' in request.POST and 'color' in request.POST:
-            size_id = int(request.POST['size'])
-            size = get_object_or_404(ShoeSize, id=size_id)
-            color_id = int(request.POST['color'])
-            color = get_object_or_404(ShoeColor, id=color_id)
+        selected_size = request.POST.get('selected_size')
+        selected_color = request.POST.get('selected_color')
 
-            # Determine the price based on discount
+        if selected_size and selected_color:
+            size = get_object_or_404(ShoeSize, size=selected_size)
+            color = get_object_or_404(ShoeColor, id=selected_color)
+
             price = product.price
             if product.discount:
                 price = product.price * (100 - product.discount_percent) / 100
 
-            # Check if the item already exists in the cart
             item = Cart.objects.filter(product=product, user=user, size=size, color=color).first()
             if item:
                 item.quantity += quantity
@@ -358,20 +416,19 @@ def add_to_cart(request, product_id):
             else:
                 Cart.objects.create(product=product, user=user, quantity=quantity, size=size, color=color, price=price)
 
-            # Update UserProfile cart count
             user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
             user_profile.update_cart_count()
 
-            # Adding message to be displayed when a new item is added to the cart
-            messages.info(request, f'{item_name} added to Cart')
-            return redirect('product_detail', product_id=product_id)
+            return JsonResponse({'success': True, 'message': f'{item_name} added to Cart'})
         else:
-            # Handle the case when 'size' or 'color' is missing in POST data
-            messages.error(request, 'Invalid request. Please select size and color.')
-            return redirect('product_detail', product_id=product_id)
+            return JsonResponse({'success': False, 'message': 'Invalid request. Please select size and color.'})
 
-    # Handle GET requests separately, if needed
-    return redirect('product_detail', product_id=product_id)
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+def cart_count(request):
+    user = request.user
+    cart_item_count = Cart.objects.filter(user=user).count()
+    return JsonResponse({'success': True, 'cart_item_count': cart_item_count})
 
 @login_required
 def remove_from_cart(request, product_id):
@@ -428,25 +485,6 @@ def update_cart_item(request, item_id):
 def checkout(request):
     return render(request, 'checkout.html')
 
-#this adds a product to the user's favorites
-def add_to_favorite(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-
-    # Check if the product is already in favorites
-    existing_favorite = Favorite.objects.filter(user=request.user, product=product).first()
-
-    if existing_favorite:
-        # Remove the product from favorites
-        existing_favorite.delete()
-        messages.success(request, f'{product.name} removed from Favorites.')
-    else:
-        # Create a new Favorite instance
-        favorite = Favorite(user=request.user, product=product)
-        favorite.save()
-        messages.success(request, f'{product.name} added to Favorites.')
-
-    return redirect('product_detail', product_id=product_id)
-
 # this displays the user's favorite items
 def favorite(request):
     user = request.user
@@ -468,6 +506,25 @@ def favorite(request):
     return render(request, 'mains/favorite.html', context)
 
 
+#this adds a product to the user's favorites
+def add_to_favorite(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    # Check if the product is already in favorites
+    existing_favorite = Favorite.objects.filter(user=request.user, product=product).first()
+
+    if existing_favorite:
+        # Remove the product from favorites
+        existing_favorite.delete()
+        messages.success(request, f'{product.name} removed from Favorites.')
+    else:
+        # Create a new Favorite instance
+        favorite = Favorite(user=request.user, product=product)
+        favorite.save()
+        messages.success(request, f'{product.name} added to Favorites.')
+
+    return redirect('product_detail', product_id=product_id)
+
 # this removes an item from the user's favorites
 def remove_from_favorite(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -484,9 +541,31 @@ def remove_from_favorite(request, product_id):
 
     return redirect('favorite')
 
+def toggle_favorite(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+
+        # Check if the product is already in favorites
+        existing_favorite = Favorite.objects.filter(user=request.user, product=product).first()
+
+        if existing_favorite:
+            # Remove the product from favorites
+            existing_favorite.delete()
+            return JsonResponse({'success': True, 'action': 'removed'})
+        else:
+            # Add the product to favorites
+            Favorite.objects.create(user=request.user, product=product)
+            return JsonResponse({'success': True, 'action': 'added'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
 #function to display discounted products
 def discounted_products(request):
+    user = request.user
     products = Product.objects.filter(discount=True)
+
+    # Get the user's favorite products
+    favorite_product_ids = Favorite.objects.filter(user=user).values_list('product_id', flat=True)
     
     discounted_products = []
     for product in products:
@@ -503,11 +582,16 @@ def discounted_products(request):
         
         discounted_products.append(product)
     
-    context = {'products': discounted_products}
+    context = {'products': discounted_products,
+               'favorite_product_ids': favorite_product_ids}
     return render(request, 'categories/discounted_products.html', context)
 
 def display_category(request, category):
+    user = request.user
     products = Product.objects.filter(categories = category)
+
+    # Get the user's favorite products
+    favorite_product_ids = Favorite.objects.filter(user=user).values_list('product_id', flat=True)
 
     discounted_products = []
     for product in products:
@@ -526,7 +610,8 @@ def display_category(request, category):
 
     category_name = category.upper()
     context = {'products' : discounted_products,
-               'category_name' : category_name}
+               'category_name' : category_name,
+               'favorite_product_ids' : favorite_product_ids}
     return render(request, f'categories/{category}.html', context)
 
 def trending(request):
@@ -538,9 +623,10 @@ def new(request):
 
 
 #this function allows the user to create an order from the products added to their Cart.
+@login_required
+@transaction.atomic
 def create_order(request):
-    if request.method == 'POST':
-        # Retrieve the current user
+    if request.method == 'POST' and request.user.is_authenticated:
         user = request.user
         
         # Create a new order for the user
@@ -556,29 +642,20 @@ def create_order(request):
         for cart_item in cart_items:
             product = cart_item.product
             
-            # Check if the product has a discount applied
+            # Calculate the discounted price if applicable
             if product.discount:
-                # Calculate the discounted price
                 product_price = product.price * (100 - product.discount_percent) / 100
-                # product.product_price = product_price
-                sub_total = product_price * cart_item.quantity
-                # Update the total price with the discounted price
-                total_price += product_price * cart_item.quantity
             else:
-                # If no discount, use the regular price
-                total_price += product.price * cart_item.quantity
-
-                sub_total = product.price * cart_item.quantity
-
                 product_price = product.price
+
+            sub_total = product_price * cart_item.quantity
+            total_price += sub_total
             
-
-
             # Create OrderItem instance and associate it with the order
-            order_item = OrderItem.objects.create(
+            OrderItem.objects.create(
                 order=order,
                 product=product,
-                price = product_price,
+                price=product_price,
                 quantity=cart_item.quantity,
                 size=cart_item.size,
                 color=cart_item.color,
@@ -588,43 +665,52 @@ def create_order(request):
             # Remove the cart item after adding it to the order
             cart_item.delete()
 
+            # Update sales stats
             item = sales_stats.objects.filter(product=product).first()
             if item:
                 item.quantity_ordered += cart_item.quantity
                 item.save()
             else:
-                sales_stats.objects.create(product=product, quantity_ordered = cart_item.quantity)
-
+                sales_stats.objects.create(product=product, quantity_ordered=cart_item.quantity)
         
         # Update the total price of the order
         order.total_price = total_price
         order.save()
         
-            # Update UserProfile cart count
+        # Update UserProfile cart count
         user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
         user_profile.update_cart_count()
 
-         # Send email notification to admin
+        # Send email notification to user and admin
+        # subject = 'New Order Notification'
+        # message = render_to_string('emails/new_order_notification.html', {'order': order})
+        # plain_message = strip_tags(message)
+        # user_email = user.email
+        # admin_email = 'justnunoo1@gmail.com'
+
+        # send_mail(subject, plain_message, admin_email, [user_email], html_message=message)
+        # send_mail(subject, plain_message, user_email, [admin_email], html_message=message)
+
+
         subject = 'New Order Notification'
         message = render_to_string('emails/new_order_notification.html', {'order': order})
         plain_message = strip_tags(message)
-        user_email = user.email  # Replace with your email address
-        admin_email = 'justnunoo1@gmail.com'   # Replace with admin's email address
-        send_mail(subject, plain_message, user_email, [admin_email], html_message=message)
-        send_mail(subject, plain_message, admin_email, [user_email], html_message=message)
+        user_email = user.email
+        admin_email = 'justnunoo1@gmail.com'
+
+        try:
+            send_mail(subject, plain_message, admin_email, [user_email], html_message=message)
+            send_mail(subject, plain_message, user_email, [admin_email], html_message=message)
+        except Exception as email_error:
+            logger.error("Error sending email: %s", email_error)
+            messages.error(request, f'Order placed but failed to send email: {email_error}')
+            return JsonResponse({'success': True, 'order_id': order.id, 'email_error': str(email_error)})
 
         messages.success(request, 'Order has been successfully placed')
-
-        context = {'order' : order,
-                   }
-
-        # Redirect to a page indicating the order has been successfully created
-        return render(request, 'mains/cart.html', context)
+        return JsonResponse({'success': True, 'order_id': order.id})
     else:
         messages.error(request, 'Order placing unsuccessful')
-
-        # If the request method is not POST, redirect the user to another page or display an error message
-        return redirect('cart')  # Redirect to home page or any other page
+        return JsonResponse({'success': False, 'error_message': 'Order placing unsuccessful'})
 
 
 def order_details(request, order_id):
@@ -643,13 +729,11 @@ def orders(request):
 
 def send_message(request):
     user = request.user
-    # current_url = request.build_absolute_uri()
     selected_product_id = request.session.pop('selected_product_id', None)
     redirect_url = reverse('product_detail', args=[selected_product_id]) if selected_product_id else reverse('home')
 
-
     if request.method == 'POST':
-        message_content = request.POST.get('content') # Changed variable name to be more descriptive
+        message_content = request.POST.get('content')  # Changed variable name to be more descriptive
         if message_content:  # Check if the message content is not empty
             Message.objects.create(sender=user, content=message_content)
             messages.success(request, 'Message sent successfully.')
@@ -661,13 +745,12 @@ def send_message(request):
             to_email = 'justnunoo1@gmail.com'  # Replace with admin's email address
             send_mail(subject, message, from_email, [to_email])
 
+            return JsonResponse({"success": True, "message" : "Message sent successfully"})
         else:
             messages.error(request, 'Message content cannot be empty.')  # Add a message if the message content is empty
-
-        return redirect(redirect_url)  # Redirect back to the current URL after sending the message
+            return JsonResponse({"success": False, "error_message": "Message content cannot be empty."})
     else:
-        return redirect(redirect_url)  # Redirect back to the current URL if the request method is not POST
-    
+        return JsonResponse({"success": False, "error_message": "Invalid request method."})
 
 # def send_new_order_notification(request):
 #     # Retrieve the latest order

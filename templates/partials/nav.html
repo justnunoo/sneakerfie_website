@@ -1,6 +1,6 @@
 {% load static %}  
   <!-- Navbar -->
-  <nav class="navbar fixed-top navbar-expand-md navbar-light bg-white">
+  <nav class="navbar fixed-top navbar-expand-md navbar-light bg-white animate-up" id="navbar">
     <!-- Container wrapper -->
     <div class="container-fluid">
       <!-- Navbar brand -->
@@ -71,8 +71,8 @@
       <div class="d-flex align-items-center">
         
         <!-- Search -->
-        <form class="w-auto py-1 me-2 search-form" style="max-width: 12rem" method="GET" action="{% url 'search' %}" >
-          <input type="search" class="form-control rounded-0" placeholder="Search Shoe" aria-label="Search" name="query" style="padding-right: 10px;">
+        <form class="w-auto py-1 me-2 search-form" style="max-width: 12rem; " method="GET" action="{% url 'search' %}" >
+          <input type="search" class="form-control rounded-2" placeholder="Search Shoe" aria-label="Search" name="query" style="padding-right: 10px;">
         </form>
 
         <!-- {% include 'partials/nav_search.html' %} -->
@@ -80,13 +80,18 @@
         {% if user.is_authenticated %}
           <!-- Icon -->
           <a class="nav-link me-2" href="{% url 'favorite' %}">
-            <i class="fas fa-heart" title="Favorites"></i>
+            <i class="fa-regular fa-heart fa-xl" title="Favorites" style=""></i>
           </a>
   
           <a class="nav-link me-2" href="{% url 'cart' %}">
-            <i class="fas fa-shopping-cart"></i>
+            {% if cart_item_count == 0 %}
+              <i class="fa-solid fa-cart-shopping fa-beat-fade"></i>
+            {% else %}
+              <i class="fas fa-shopping-cart"></i>
+            {% endif%}
+
             {% if cart_item_count != 0 %}
-              <span class="badge rounded-pill badge-notification bg-danger">{{ cart_item_count }}</span>
+              <span class="badge rounded-pill badge-notification" id="cart_count" style="background-color:cadetblue;">{{ cart_item_count }}</span>
             {% endif%}
           </a>
   
@@ -117,5 +122,30 @@
         .search-form {
             max-width: 8rem; /* Adjust the width as needed */
         }
+
+        .navbar {
+          transition: top 0.3 ease-in-out;
+        }
+
+        .hide-nav{
+          top: -75px;
+        }
     }
 </style>
+
+<script>
+  prevScrollPos = window.pageYOffset;
+
+  window.addEventListener("scroll", ()=>{
+    var currentScrollPos = window.pageYOffset;
+    if(prevScrollPos > currentScrollPos){
+      document.getElementById("navbar").style.top = "0";
+      // document.getElementById("navbar").style.display = "block";
+    }
+    else{
+      document.getElementById("navbar").style.top = "-75px";
+      // document.getElementById("navbar").style.display = "none";
+    }
+    prevScrollPos = currentScrollPos;
+  });
+</script>

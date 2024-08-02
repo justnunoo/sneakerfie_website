@@ -7,7 +7,7 @@
     <h1 class="mb-4 pt-4" style="text-align: center;">{{ category_name }} PRODUCTS</h1>
 
     {% if products %}    
-      <div class="row">
+      <div class="row animate-up">
         {% for product in products %}
           <div class="col-lg-3 col-md-6 mb-4">
             <div class="card">
@@ -44,6 +44,7 @@
                    {% endif %}
                 </div>
               </a>
+              <i class="fas fa-heart favorite-icon {% if product.id in favorite_product_ids %}favorite-icon-active{% endif %}" data-product-id="{{ product.id }}"></i>
             </div>
           </div>
         {% endfor %}

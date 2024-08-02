@@ -35,6 +35,8 @@ urlpatterns = [
     path('cart/', views.cart, name='cart'),
     
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'), #url to add item to cart
+
+    path("cart_count/", views.cart_count, name = "cart_count"), #this is used to get the number of items in the cart
     
     path('remove_from_cart/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'), #url to remove item from cart
     
@@ -49,6 +51,8 @@ urlpatterns = [
     path('add_to_favorite/<int:product_id>/', views.add_to_favorite, name='add_to_favorite'), #url to add item to favourites
     
     path('remove_from_favorite/<int:product_id>/', views.remove_from_favorite, name='remove_from_favorite'), #url to delete item from favoutites
+
+    path('toggle_favorite/<int:product_id>/', views.toggle_favorite, name='toggle_favorite'), #toggle the favorite icon to add and remove product from favorite list
     
     path('discounted_products/', views.discounted_products, name='discounted_products'), #url to display discounted products
 

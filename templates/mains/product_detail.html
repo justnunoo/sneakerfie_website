@@ -5,14 +5,80 @@
 
 {% include 'partials/messages.html' %}
 
+<style>
+    .size-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 400px;
+    /* margin: 20px auto; */
+    justify-content: center;
+}
+
+.size-option {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.size-option:hover {
+    border-color: #000;
+}
+
+.size-option.selected {
+    transform: scale(0.8);
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+}
+
+.color-selector {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    margin-right: 10px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+}
+
+.color-option.selected {
+    transform: scale(0.7);
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px #000;
+}
+
+    /* Animation styles */
+    .animate-up {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+    }
+
+    .in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+</style>
+
 <!--Main layout-->
 <main class="mt-2 pt-4" style="background-color: rgb(234, 234, 234);">
+    <div id="flash-messages"></div>
+
   <div class="container mt-5">
       <!--Grid row-->
-      <div class="row">
+      <div class="row animate-up">
           <!--Grid column-->
           <div class="col-md-6 mb-4">
-            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="imageCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">  <!-- Set active class here for the first item -->
                         <img src="{% static product.image_path %}" class="d-block w-100" alt="{{ product.name }}">
@@ -73,50 +139,50 @@
                   </p>
                 {% endif %}
 
-                  <strong><p style="font-size: 20px;">Description</p></strong>
+                  <strong><p style="font-size: 20px;">{{ product.name }}</p></strong>
 
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Et dolor suscipit libero eos atque quia ipsa sint voluptatibus! Beatae sit assumenda asperiores iure at maxime atque repellendus maiores quia sapiente.</p>
                  
                     {% if user.is_authenticated %}
-                        <form method="post" action="{% url 'add_to_cart' product.id %}">
-                            {% csrf_token %}
-                        
-                            <div class="mb-3">
-                                <label for="quantity" class="form-label">Quantity:</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="10">
-                            </div>
-                        
-                            <div class="mb-3">
-                                <label class="form-label">Size:</label>
+                    <form method="post" action="{% url 'add_to_cart' product.id %}" id="addProduct">
+                        {% csrf_token %}
+                
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity:</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="10">
+                        </div>
+                
+                        <div class="mb-3">
+                            <label class="form-label">Size:</label>
+                            <div class="size-selector">
                                 {% for size in product.sizes.all %}
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="size" id="size{{ size.id }}" value="{{ size.id }}" required>
-                                        <label class="form-check-label" for="size{{ size.id }}">{{ size.size }}</label>
-                                    </div>
+                                    <button type="button" class="size-option" data-size="{{ size.size }}">{{ size.size }}</button>
                                 {% endfor %}
                             </div>
-                        
-                            <div class="mb-3">
-                                <label class="form-label">Colors:</label>
+                            <input type="hidden" name="selected_size" id="selected_size" value="">
+                        </div>
+                
+                        <div class="mb-3">
+                            <label class="form-label">Colors:</label>
+                            <div class="color-selector">
                                 {% for color in product.colors.all %}
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="color" id="{{ color.name }}" value="{{ color.id }}" required>
-                                        <label class="form-check-label" for="{{ color.name }}">{{ color.color }}</label>
-                                    </div>
+                                    <div class="color-option" data-color="{{ color.id }}" style="background-color: {{ color.color }};"></div>
                                 {% endfor %}
                             </div>
-                            
-                            <button type="submit" class="btn btn-primary" >Add to cart</button>
-                        </form>
+                            <input type="hidden" name="selected_color" id="selected_color" value="">
+                        </div>
+                
+                        <button type="submit" class="btn btn-outline-primary rounded-pill py-2" style="width: 300px;">Add to cart </button>
+                    </form>
 
                         <div style="margin-top: 20px;">
                             <form action="{% url 'add_to_favorite' product.id %}" method="post">
                                 {% csrf_token %}
                                 <!-- Add/remove from favorites form fields here -->
                                     {% if is_favorite %}
-                                        <button type="submit" class="btn btn-danger">Remove from Favorites</button>
+                                        <button type="submit" class="btn btn-outline-danger py-2 rounded-pill" style="width: 300px";>Remove from Favorites</button>
                                     {% else %}
-                                        <button type="submit" class="btn btn-primary">Add to Favorites</button>
+                                        <button type="submit" class="btn btn-outline-primary py-2 rounded-pill" style="width: 300px;">Favorites <i class="fa-regular fa-heart"></i></button>
                                     {% endif %}
                             </form>
                         </div>
@@ -138,33 +204,23 @@
       <hr />
 
       <!--Grid row-->
-      <div class="row d-flex justify-content-center">
+      <div class="row d-flex justify-content-center ">
           <!--Grid column-->
-          <div class="col-md-6 text-center">
+          <div class="col-md-6 text-center ">
               <h4 class="my-4 h4">Additional information</h4>
 
               <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus suscipit modi sapiente illo soluta odit voluptates, quibusdam officia. Neque quibusdam quas a quis porro? Molestias illo neque eum in laborum.</p>
           </div>
           <!--Grid column-->
       </div>
-      <!--Grid row-->
+      
 
       <!--Grid row-->
       <div class="row">
         <!--Grid column-->
         {% for image in images_to_display %}
-        <!-- <div class="col-lg-4 col-md-6 mb-4 bg-image hover-zoom ripple ripple-surface ripple-surface-light">
-            <a href="{% url 'product_detail' image.id %}">
-                <img src="{% static image.image_path %}" class="img-fluid" alt="{{ image.name}}" />
-            </a>
-            <div class="colors">
-                {% for small_image in image.get_small_images %}
-                    <img class="small-image" src="{% static small_image.img %}" alt="{{ small_image.name }}">
-                {% endfor %}
-            </div>
-        </div> -->
         <div class="col-md-4">
-            <div class="card">
+            <div class="card animate-up mb-3">
                 <a href="{% url 'product_detail' image.id %}">
                     <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light">
                         <img src="{% static image.image_path %}" class="img-fluid" alt="{{ image.name}}" />
@@ -173,7 +229,6 @@
             </div>
         </div>
         
-
         {% endfor %}
         <!--Grid column-->
     </div>
@@ -186,5 +241,116 @@
 {% include 'partials/footer.html' %}
 
 <script src="{% static 'options.js' %}" ></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        const elements = document.querySelectorAll(".animate-up");
+
+        function checkIfInView(){
+            elements.forEach(element =>{
+            const rect = element.getBoundingClientRect();
+
+            if (rect.top <= (window.innerHeight || document.documentElement.clientHeight) && rect.bottom >= 0){
+                setTimeout(() => {
+                    element.classList.add('in-view');
+                }, 200)
+            }
+        })
+        };
+
+        window.addEventListener("scroll", checkIfInView);
+
+        checkIfInView();
+        
+        // this is for the form handling
+        const form = document.getElementById('addProduct');
+
+        let cart_count = document.querySelector("#cart_count");
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting the default way
+
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Display success message
+                displayFlashMessage('success', data.message);
+                
+                //update cart count
+                updateCartCount();
+
+            } else {
+                // Display error message
+                displayFlashMessage('danger', data.message);
+            }
+        })
+        .catch(error => {
+            // Display error message in case of network error
+            displayFlashMessage('danger', 'An error occurred. Please try again.');
+        });
+    });
+
+    function displayFlashMessage(type, message) {
+        const flashContainer = document.getElementById('flash-messages');
+        const flashMessage = document.createElement('div');
+        flashMessage.className = `alert alert-${type}`;
+        flashMessage.textContent = message;
+        flashContainer.appendChild(flashMessage);
+
+        // Remove the message after a few seconds
+        setTimeout(() => {
+            flashMessage.remove();
+        }, 5000);
+    }
+
+    function updateCartCount() {
+        fetch('{% url "cart_count" %}') 
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const cartCount = document.getElementById('cart_count');
+                cartCount.textContent = data.cart_item_count;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching cart count:', error);
+        });
+    }
+    
+    const sizeOptions = document.querySelectorAll('.size-option');
+    const selectedSizeInput = document.getElementById('selected_size');
+
+    const colorOptions = document.querySelectorAll('.color-option');
+    const selectedColorInput = document.getElementById('selected_color');
+
+    sizeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            sizeOptions.forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+            selectedSizeInput.value = option.getAttribute('data-size');
+            console.log(selectedSizeInput.value)  // for testing purposes, remove in production environment  // console.log(selectedSizeInput.value)  // for testing purposes, remove in production environment  // console.log(selectedSizeInput.value)  // for testing purposes, remove in production environment  // console.log(selectedSizeInput.value)  // for testing purposes, remove in production environment  // console.log(selectedSizeInput.value)  //
+        });
+    });
+
+    colorOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+            selectedColorInput.value = option.getAttribute('data-color');
+            console.log(selectedSizeInput.value)
+        });
+    });
+
+    });
+</script>
 
 {% endblock %}

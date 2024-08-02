@@ -1,26 +1,80 @@
-from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.contrib import messages
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import send_mail
+from django.db import transaction
 
-def send_message(request):
-    user = request.user
-    current_url = request.build_absolute_uri()
+@transaction.atomic
+def create_order(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        user = request.user
+        
+        # Create a new order for the user
+        order = Order.objects.create(user=user, total_price=0)
+        
+        # Retrieve items from the cart for the current user
+        cart_items = Cart.objects.filter(user=user)
 
-    if request.method == 'POST':
-        message_content = request.POST.get('content')
-        if message_content:
-            # Save the message to the database
-            Message.objects.create(sender=user, content=message_content)
+        # Initialize the total price of the order
+        total_price = 0
+        
+        # Create OrderItem instances for each cart item and associate them with the order
+        for cart_item in cart_items:
+            product = cart_item.product
+            
+            # Calculate the discounted price if applicable
+            if product.discount:
+                product_price = product.price * (100 - product.discount_percent) / 100
+            else:
+                product_price = product.price
 
-            # Send email to admin
-            subject = 'New Message from User'
-            message = f'User Email: {user.email}\nUser Name: {user.username}\nMessage: {message_content}'
-            from_email = user.email
-            to_email = 'admin@example.com'  # Replace with admin's email address
-            send_mail(subject, message, from_email, [to_email])
+            sub_total = product_price * cart_item.quantity
+            total_price += sub_total
+            
+            # Create OrderItem instance and associate it with the order
+            OrderItem.objects.create(
+                order=order,
+                product=product,
+                price=product_price,
+                quantity=cart_item.quantity,
+                size=cart_item.size,
+                color=cart_item.color,
+                subtotal=sub_total
+            )
+            
+            # Remove the cart item after adding it to the order
+            cart_item.delete()
 
-            return JsonResponse({'success': True, 'message': 'Message sent successfully.'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Message content cannot be empty.'})
+            # Update sales stats
+            item = sales_stats.objects.filter(product=product).first()
+            if item:
+                item.quantity_ordered += cart_item.quantity
+                item.save()
+            else:
+                sales_stats.objects.create(product=product, quantity_ordered=cart_item.quantity)
+        
+        # Update the total price of the order
+        order.total_price = total_price
+        order.save()
+        
+        # Update UserProfile cart count
+        user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
+        user_profile.update_cart_count()
+
+        # Send email notification to user and admin
+        subject = 'New Order Notification'
+        message = render_to_string('emails/new_order_notification.html', {'order': order})
+        plain_message = strip_tags(message)
+        user_email = user.email
+        admin_email = 'justnunoo1@gmail.com'
+
+        send_mail(subject, plain_message, admin_email, [user_email], html_message=message)
+        send_mail(subject, plain_message, user_email, [admin_email], html_message=message)
+
+        messages.success(request, 'Order has been successfully placed')
+        return JsonResponse({'success': True, 'order_id': order.id})
     else:
-        return redirect(current_url)
+        messages.error(request, 'Order placing unsuccessful')
+        return JsonResponse({'success': False, 'error_message': 'Order placing unsuccessful'})
